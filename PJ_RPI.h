@@ -17,9 +17,14 @@
 
 #include <unistd.h>
 
+//#define NO_GPIOMEM 1
+// If you have an older build of Raspian, etc. you may want to uncomment the above line to prevent the library from attempting to open /dev/gpiomem.
+// It's harmless but it creates an annoying warning every time your code runs.
+// (Please note: /dev/gpiomem is usually required to run a program non-root, using the gpio group privilege, like sysfs does. Consider upgrading your OS release.).
+
 // Define which Raspberry Pi board are you using. Take care to have defined only one at time.
-#define RPI
-//#define RPI2
+//#define RPI
+#define RPI2
 
 #ifdef RPI
 #define BCM2708_PERI_BASE       0x20000000

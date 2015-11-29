@@ -6,11 +6,18 @@ struct bcm2835_peripheral bsc0 = {BSC0_BASE};
 // Exposes the physical address defined in the passed structure using mmap on /dev/mem
 int map_peripheral(struct bcm2835_peripheral *p)
 {
-   // Open /dev/mem
-   if ((p->mem_fd = open("/dev/mem", O_RDWR|O_SYNC) ) < 0) {
-      printf("Failed to open /dev/mem, try checking permissions.\n");
-      return -1;
+#ifndef NO_GPIOMEM
+   // Attempt to open /dev/gpiomem
+   if ((p->mem_fd = open("/dev/gpiomem", O_RDWR|O_SYNC) ) < 0) {
+      printf("Could not open /dev/gpiomem, attempting /dev/mem instead.\n");
+#endif
+      if ((p->mem_fd = open("/dev/mem", O_RDWR|O_SYNC) ) < 0) {
+        printf("Failed to open /dev/mem, try checking permissions, you probably need to run as root or grant access to /dev/mem.\n");
+        return -1;
+      }
+#ifndef NO_GPIOMEM
    }
+#endif
 
    p->map = mmap(
       NULL,
